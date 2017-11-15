@@ -6,7 +6,6 @@ GRID_SIZE = 8
 
 class MainWindow:
     nav_index = 0
-    index_string = None
 
     gamma_string = "Auto"
     gamma_entry = None
@@ -17,12 +16,14 @@ class MainWindow:
 
     label_img_index = None
 
+    index_string = None
+    expected_string = None
+    predicted_string = None
+
     def __init__(self):
         self.root = Tk()
         self.create_main_window()
         self.digits = datasets.load_digits()
-        self.expected_string = StringVar()
-        self.predicted_string = StringVar()
         return
 
     def run(self):
@@ -37,13 +38,16 @@ class MainWindow:
         input_frame = Frame(top_frame)
         input_frame.pack(side=TOP)
         label_gamma = Label(input_frame, text="Gamma =")
+        #label_gamma.grid(row=0, column=0)
         label_gamma.pack(side=LEFT)
 
         self.gamma_string = StringVar()
         self.gamma_entry = Entry(input_frame, textvariable=self.gamma_string)
         self.gamma_string.set("Auto")
+        #self.gamma_entry.grid(row=0, column=1)
         self.gamma_entry.pack(side=LEFT)
         train_btn = Button(input_frame, text="Re-train", command=self.cmd_retrain)
+        #train_btn.grid(row=0, column=2)
         train_btn.pack(side=LEFT)
 
         bitmap_frame = Frame(top_frame)
@@ -59,32 +63,42 @@ class MainWindow:
         bottom_frame.pack(side=BOTTOM)
 
         pre_btn = Button(bottom_frame, text="Previous", command=self.go_pre)
-        pre_btn.pack(side=LEFT)
+        pre_btn.grid(row=0, column=0)
 
         self.label_img_index = Label(bottom_frame, text="Jump to")
-        self.label_img_index.pack(side=LEFT)
+        self.label_img_index.grid(row=0, column=1)
 
         self.index_string = StringVar()
         entry_img_index = Entry(bottom_frame, text="0", textvariable=self.index_string)
-        entry_img_index.pack(side=LEFT)
+        entry_img_index.grid(row=0, column=2)
 
         jump_btn = Button(bottom_frame, text="Jump", command=self.jump)
-        jump_btn.pack(side=LEFT)
-
-        label_expected = Label(bottom_frame, text="Expecting:")
-        label_expected.pack(side=LEFT)
-
-        entry_expected = Entry(bottom_frame, textvariable=self.expected_string)
-        entry_expected.pack(side=LEFT)
-
-        label_predicted = Label(bottom_frame, text="Predicted:")
-        label_predicted.pack(side=LEFT)
-
-        entry_predicted = Entry(bottom_frame, textvariable=self.predicted_string)
-        entry_predicted.pack(side=LEFT)
+        jump_btn.grid(row=0, column=3)
 
         next_btn = Button(bottom_frame, text="Next", command=self.go_next)
-        next_btn.pack(side=RIGHT)
+        next_btn.grid(row=0, column=4)
+
+        pre_error_btn = Button(bottom_frame, text="Prev. Error", command=self.pre_error)
+        pre_error_btn.grid(row=1, column=0)
+
+        label_expected = Label(bottom_frame, text="Expecting:")
+        label_expected.grid(row=1, column=1)
+
+        self.expected_string = StringVar()
+        entry_expected = Entry(bottom_frame, textvariable=self.expected_string)
+        entry_expected.grid(row=1, column=2)
+
+        label_predicted = Label(bottom_frame, text="Predicted:")
+        label_predicted.grid(row=1, column=3)
+
+        self.predicted_string = StringVar()
+        entry_predicted = Entry(bottom_frame, textvariable=self.predicted_string)
+        entry_predicted.grid(row=1, column=4)
+
+        next_error_btn = Button(bottom_frame, text="Prev. Error", command=self.next_error)
+        next_error_btn.grid(row=1, column=5)
+
+        self.expected_string.set("Hello")
         return
 
     def cmd_retrain(self):
@@ -132,9 +146,26 @@ class MainWindow:
             self.draw_digit(self.nav_index)
         return
 
+    def pre_error(self):
+        for i in range(self.nav_index-1, 0, -1):
+            if self.predicted[i] != self.expected[i]:
+                self.nav_index = i
+                break
+        self.draw_digit(self.nav_index)
+        return
+
+    def next_error(self):
+        n_samples = len(self.digits.images)
+        for i in range(self.nav_index+1,  n_samples // 2):
+            if self.predicted[i] != self.expected[i]:
+                self.nav_index = i
+                break
+        self.draw_digit(self.nav_index)
+        return
+
     def jump(self):
         target = int(self.index_string.get())
-        n_samples = len(self.digits.images)
+        n_samples = len(self.digits.images)//2
         if 0 <= target <= n_samples:
             self.nav_index = target
             self.draw_digit(self.nav_index)
@@ -162,8 +193,13 @@ class MainWindow:
                 self.bitmap_block[row][col].configure(bg=self.color_code(img[row][col]))
 
         self.index_string.set(str(index))
+        print("Setting index to ", str(index))
+
         self.expected_string.set(str(self.expected[index]))
+        print("Expected: ", str(self.expected[index]))
+
         self.predicted_string.set(str(self.predicted[index]))
+        print("Predicted: ", str(self.predicted[index]))
         return
 
 
