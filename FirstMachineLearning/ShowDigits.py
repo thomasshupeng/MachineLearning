@@ -22,6 +22,7 @@ class MainWindow:
 
     def __init__(self):
         self.root = Tk()
+        self.root.title = "Digits v 1.0"
         self.create_main_window()
         self.digits = datasets.load_digits()
         return
@@ -36,19 +37,19 @@ class MainWindow:
         top_frame.pack(side=TOP)
 
         input_frame = Frame(top_frame)
-        input_frame.pack(side=TOP)
+        input_frame.pack(side=TOP, padx=5, pady=5)
         label_gamma = Label(input_frame, text="Gamma =")
         #label_gamma.grid(row=0, column=0)
         label_gamma.pack(side=LEFT)
 
         self.gamma_string = StringVar()
-        self.gamma_entry = Entry(input_frame, textvariable=self.gamma_string)
+        self.gamma_entry = Entry(input_frame, textvariable=self.gamma_string, width=5)
         self.gamma_string.set("Auto")
         #self.gamma_entry.grid(row=0, column=1)
         self.gamma_entry.pack(side=LEFT)
         train_btn = Button(input_frame, text="Re-train", command=self.cmd_retrain)
         #train_btn.grid(row=0, column=2)
-        train_btn.pack(side=LEFT)
+        train_btn.pack(side=LEFT, padx=5)
 
         bitmap_frame = Frame(top_frame)
         bitmap_frame.pack(side=BOTTOM)
@@ -60,23 +61,23 @@ class MainWindow:
                 self.bitmap_block[row][col] = bitmaplable
 
         bottom_frame = Frame(self.root)
-        bottom_frame.pack(side=BOTTOM)
+        bottom_frame.pack(side=BOTTOM, padx=5, pady=5)
 
         pre_btn = Button(bottom_frame, text="Previous", command=self.go_pre)
-        pre_btn.grid(row=0, column=0)
+        pre_btn.grid(row=0, column=0, sticky=W)
 
         self.label_img_index = Label(bottom_frame, text="Jump to")
-        self.label_img_index.grid(row=0, column=1)
+        self.label_img_index.grid(row=0, column=2)
 
         self.index_string = StringVar()
-        entry_img_index = Entry(bottom_frame, text="0", textvariable=self.index_string)
-        entry_img_index.grid(row=0, column=2)
+        entry_img_index = Entry(bottom_frame, text="0", textvariable=self.index_string, width=5)
+        entry_img_index.grid(row=0, column=3)
 
         jump_btn = Button(bottom_frame, text="Jump", command=self.jump)
-        jump_btn.grid(row=0, column=3)
+        jump_btn.grid(row=0, column=4)
 
         next_btn = Button(bottom_frame, text="Next", command=self.go_next)
-        next_btn.grid(row=0, column=4)
+        next_btn.grid(row=0, column=5, sticky=E)
 
         pre_error_btn = Button(bottom_frame, text="Prev. Error", command=self.pre_error)
         pre_error_btn.grid(row=1, column=0)
@@ -85,17 +86,17 @@ class MainWindow:
         label_expected.grid(row=1, column=1)
 
         self.expected_string = StringVar()
-        entry_expected = Entry(bottom_frame, textvariable=self.expected_string)
+        entry_expected = Entry(bottom_frame, textvariable=self.expected_string, state=DISABLED, width=5)
         entry_expected.grid(row=1, column=2)
 
         label_predicted = Label(bottom_frame, text="Predicted:")
         label_predicted.grid(row=1, column=3)
 
         self.predicted_string = StringVar()
-        entry_predicted = Entry(bottom_frame, textvariable=self.predicted_string)
+        entry_predicted = Entry(bottom_frame, textvariable=self.predicted_string, state=DISABLED, width=5)
         entry_predicted.grid(row=1, column=4)
 
-        next_error_btn = Button(bottom_frame, text="Prev. Error", command=self.next_error)
+        next_error_btn = Button(bottom_frame, text="Next Error", command=self.next_error)
         next_error_btn.grid(row=1, column=5)
 
         self.expected_string.set("Hello")
@@ -193,13 +194,13 @@ class MainWindow:
                 self.bitmap_block[row][col].configure(bg=self.color_code(img[row][col]))
 
         self.index_string.set(str(index))
-        print("Setting index to ", str(index))
+        #print("Setting index to ", str(index))
 
         self.expected_string.set(str(self.expected[index]))
-        print("Expected: ", str(self.expected[index]))
+        #print("Expected: ", str(self.expected[index]))
 
         self.predicted_string.set(str(self.predicted[index]))
-        print("Predicted: ", str(self.predicted[index]))
+        #print("Predicted: ", str(self.predicted[index]))
         return
 
 
