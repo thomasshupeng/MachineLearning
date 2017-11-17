@@ -34,70 +34,74 @@ class MainWindow:
 
     def create_main_window(self):
         top_frame = Frame(self.root)
-        top_frame.pack(side=TOP)
+        top_frame.pack(side=TOP, padx=5, pady=5)
 
         input_frame = Frame(top_frame)
         input_frame.pack(side=TOP, padx=5, pady=5)
         label_gamma = Label(input_frame, text="Gamma =")
-        #label_gamma.grid(row=0, column=0)
         label_gamma.pack(side=LEFT)
 
         self.gamma_string = StringVar()
-        self.gamma_entry = Entry(input_frame, textvariable=self.gamma_string, width=5)
+        self.gamma_entry = Entry(input_frame, textvariable=self.gamma_string, width=8)
         self.gamma_string.set("Auto")
-        #self.gamma_entry.grid(row=0, column=1)
         self.gamma_entry.pack(side=LEFT)
         train_btn = Button(input_frame, text="Re-train", command=self.cmd_retrain)
-        #train_btn.grid(row=0, column=2)
         train_btn.pack(side=LEFT, padx=5)
 
-        bitmap_frame = Frame(top_frame)
-        bitmap_frame.pack(side=BOTTOM)
+        disp_frame = Frame(top_frame)
+        disp_frame.pack(side=BOTTOM, padx=5, pady=5)
 
+        pre_btn = Button(disp_frame, text="Prev.", command=self.go_pre)
+        pre_btn.pack(side=LEFT, fill=BOTH)
+
+        dgt_frame = Frame(disp_frame)
+        dgt_frame.pack(side=LEFT)
+
+        bitmap_frame = Frame(dgt_frame)
+        bitmap_frame.grid(row=0, column=0, columnspan=3)
         for row in range(GRID_SIZE):
             for col in range(GRID_SIZE):
                 bitmaplable = Label(bitmap_frame, text="     ", bg='#FFFFFF')
                 bitmaplable.grid(row=row, column=col, sticky=W, padx=1, pady=1)
                 self.bitmap_block[row][col] = bitmaplable
 
+        self.label_img_index = Label(dgt_frame, text="Digit #")
+        self.label_img_index.grid(row=1, column=0, sticky=E)
+
+        self.index_string = StringVar()
+        entry_img_index = Entry(dgt_frame, text="0", textvariable=self.index_string, width=8)
+        entry_img_index.grid(row=1, column=1)
+
+        jump_btn = Button(dgt_frame, text="Jump", command=self.jump)
+        jump_btn.grid(row=1, column=2, sticky=W)
+
+        next_btn = Button(disp_frame, text="Next", command=self.go_next)
+        next_btn.pack(side=RIGHT, fill=BOTH)
+
+
         bottom_frame = Frame(self.root)
         bottom_frame.pack(side=BOTTOM, padx=5, pady=5)
 
-        pre_btn = Button(bottom_frame, text="Previous", command=self.go_pre)
-        pre_btn.grid(row=0, column=0, sticky=W)
 
-        self.label_img_index = Label(bottom_frame, text="Jump to")
-        self.label_img_index.grid(row=0, column=2)
+        label_expected = Label(bottom_frame, text="Expecting:")
+        label_expected.grid(row=0, column=0)
 
-        self.index_string = StringVar()
-        entry_img_index = Entry(bottom_frame, text="0", textvariable=self.index_string, width=5)
-        entry_img_index.grid(row=0, column=3)
+        self.expected_string = StringVar()
+        entry_expected = Entry(bottom_frame, textvariable=self.expected_string, state=DISABLED, width=5)
+        entry_expected.grid(row=0, column=1)
 
-        jump_btn = Button(bottom_frame, text="Jump", command=self.jump)
-        jump_btn.grid(row=0, column=4)
+        label_predicted = Label(bottom_frame, text="Predicted:")
+        label_predicted.grid(row=0, column=2)
 
-        next_btn = Button(bottom_frame, text="Next", command=self.go_next)
-        next_btn.grid(row=0, column=5, sticky=E)
+        self.predicted_string = StringVar()
+        entry_predicted = Entry(bottom_frame, textvariable=self.predicted_string, state=DISABLED, width=5)
+        entry_predicted.grid(row=0, column=3)
 
         pre_error_btn = Button(bottom_frame, text="Prev. Error", command=self.pre_error)
         pre_error_btn.grid(row=1, column=0)
 
-        label_expected = Label(bottom_frame, text="Expecting:")
-        label_expected.grid(row=1, column=1)
-
-        self.expected_string = StringVar()
-        entry_expected = Entry(bottom_frame, textvariable=self.expected_string, state=DISABLED, width=5)
-        entry_expected.grid(row=1, column=2)
-
-        label_predicted = Label(bottom_frame, text="Predicted:")
-        label_predicted.grid(row=1, column=3)
-
-        self.predicted_string = StringVar()
-        entry_predicted = Entry(bottom_frame, textvariable=self.predicted_string, state=DISABLED, width=5)
-        entry_predicted.grid(row=1, column=4)
-
         next_error_btn = Button(bottom_frame, text="Next Error", command=self.next_error)
-        next_error_btn.grid(row=1, column=5)
+        next_error_btn.grid(row=1, column=3)
 
         self.expected_string.set("Hello")
         return
